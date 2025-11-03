@@ -1,6 +1,6 @@
-const ProductItem = (props) => {
+const ProductItem = ({ fetchUser }) => {
   function nextClientHandler() {
-    console.log("Next");
+    fetchUser();
   }
   function toggleClientHandler() {
     console.log("Next");

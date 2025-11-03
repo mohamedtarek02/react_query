@@ -16,8 +16,7 @@ export const apiRequest = async ({
     });
     return response.data;
   } catch (error) {
-    // Optional: log or reformat error
     console.error("API Error:", error);
-    throw error.response?.data || error;
+    throw error; // Throw the error instead of returning it
   }
 };

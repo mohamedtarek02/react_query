@@ -15,4 +15,12 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    console.error("Interceptor caught error:", error);
+    return Promise.reject(error);
+  }
+);
+
 export default apiClient;
