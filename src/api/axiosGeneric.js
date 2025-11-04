@@ -17,7 +17,6 @@ export const apiRequest = async ({
     return response.data;
   } catch (error) {
     console.error("API Error:", error);
-    // Prefer response body if available
     throw error?.response?.data ?? error;
   }
 };
