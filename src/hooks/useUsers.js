@@ -1,8 +1,8 @@
 // src/hooks/useUsers.js
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "../api/axiosGeneric";
 
-export const useUsers = () => {
+export const useUsers = (options = {}) => {
   return useQuery({
     queryKey: ["users"],
     queryFn: async () => {
@@ -16,21 +16,35 @@ export const useUsers = () => {
       }
     },
     retry: false, // Disable automatic retries only fetch once
+    ...options,
   });
 };
 
-export const useUser = ({ id, enabled }) => {
+export const useUser = (id, enabled = true, options = {}) => {
   return useQuery({
     queryKey: ["user", id],
     queryFn: () => apiRequest({ method: "get", url: `/users/${id}` }),
-    enabled: !!id && enabled,
     onError: (error) => console.log("onError triggered", error),
+    enabled: !!id && enabled,
+    ...options,
   });
 };
 
-// export const useCreateUser = ({ userData }) => {
-//   return useMutation({
-//     mutationFn: () =>
-//       apiRequest({ method: "post", url: "/users", data: userData }),
-//   });
-// };
+export const useCreateUser = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (newUser) => {
+      console.log("sending data", newUser);
+      return apiRequest({ method: "post", url: "/users", data: newUser });
+    },
+    onSuccess: () => {
+      // Refresh the users list after a successful create
+      queryClient.invalidateQueries(["users"]);
+      console.log("User created — invalidated users query");
+    },
+    onError: (error) => {
+      console.log("createUser error", error);
+    },
+  });
+};
