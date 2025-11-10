@@ -38,8 +38,11 @@ export const useCreateUser = () => {
       console.log("sending data", newUser);
       return apiRequest({ method: "post", url: "/users", data: newUser });
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       // Refresh the users list after a successful create
+      const data = await apiRequest({ method: "get", url: `/users/1` });
+      console.log(data);
+
       queryClient.invalidateQueries(["users"]);
       console.log("User created — invalidated users query");
     },

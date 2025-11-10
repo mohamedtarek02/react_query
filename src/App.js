@@ -22,10 +22,15 @@ function App() {
   const { data: singleUser } = useUser(1);
 
   // Data for single user disabled initially and fetched on button click
-  const { data: anotherUser, refetch } = useUser(2, false);
+  const {
+    data: anotherUser,
+    refetch,
+    isLoading: isAnotherUserLoading,
+  } = useUser(2, false);
 
-  function fetchSecondUser() {
-    refetch();
+  async function fetchSecondUser() {
+    const { data } = await refetch();
+    console.log({ data });
   }
 
   // Sending data logic
@@ -54,6 +59,9 @@ function App() {
       onError: (err) => {
         console.log("Failed to create user", err);
       },
+      onSettled: () => {
+        console.log("Mutation finished (success or error)");
+      },
     });
   };
 
@@ -78,7 +86,9 @@ function App() {
           <div className="mt-20 mb-20 mx-auto shadow-md rounded-lg p-4 text-center bg-[#340a75] w-fit">
             <h2 className="text-white text-2xl mb-4">Single User Data:</h2>
             <p className="text-white">ID: {singleUser?.id}</p>
-            <p className="text-white">Name: {anotherUser?.name}</p>
+            <p className="text-white">
+              Name: {isAnotherUserLoading ? "Loading" : anotherUser?.name}
+            </p>
           </div>
         </>
       )}
